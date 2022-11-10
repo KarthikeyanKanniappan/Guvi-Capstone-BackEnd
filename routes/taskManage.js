@@ -140,11 +140,25 @@ router.get("/activities/:id", async (req, res) => {
         }
       }
     }
-
+    // let response = client.db("planner").collection("sumUp").insertOne(employee);
     res.json(employee);
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+
+router.get("/final", async (req, res) => {
+  try {
+    let resUser = await client
+      .db("planner")
+      .collection("sumUp")
+      .find()
+      .toArray();
+    res.json(resUser);
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
 export default router;

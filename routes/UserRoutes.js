@@ -42,10 +42,10 @@ router.post("/login", async (req, res) => {
           };
           res.json({ userValues });
         } else {
-          res.status(401).json({ message: "Admin not found" });
+          res.status(401).json({ message: "Add Admin Key" });
         }
       } else {
-        res.json({ message: "password is wrong" });
+        res.status(401).json({ message: "password is wrong" });
       }
     } else {
       res.status(401).json({ message: "user email not found" });
