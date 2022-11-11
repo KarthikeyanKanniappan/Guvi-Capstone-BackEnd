@@ -40,7 +40,7 @@ router.get("/projectList", async (req, res) => {
   }
 });
 
-// get particular Equipment
+// get particular project
 router.get("/pro/:id", async (req, res) => {
   try {
     let User = await client
@@ -53,4 +53,46 @@ router.get("/pro/:id", async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+
+//Update
+router.put("/pros/:id", async (req, res) => {
+  try {
+    let User = await client
+      .db("planner")
+      .collection("project")
+      .findOneAndUpdate(
+        { _id: mongodb.ObjectId(req.params.id) },
+        { $set: req.body }
+      );
+    let resUser = await client
+      .db("planner")
+      .collection("project")
+      .find()
+      .toArray();
+    res.json(resUser);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+// Delete
+router.delete("/del/:id", async (req, res) => {
+  try {
+    let User = await client
+      .db("planner")
+      .collection("project")
+      .findOneAndDelete({ _id: mongodb.ObjectId(req.params.id) });
+    let resUser = await client
+      .db("planner")
+      .collection("project")
+      .find()
+      .toArray();
+    res.json(resUser);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
 export default router;

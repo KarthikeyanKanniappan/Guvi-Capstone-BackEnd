@@ -24,5 +24,5 @@ app.use("/team", employee);
 app.use("/task", taskManage);
 
 app.listen(process.env.PORT || 3001, () => {
-  console.log(`Server started at ${process.env.PORT}`);
+  console.log(`Server started at ${process.env.PORT || 3001}`);
 });
