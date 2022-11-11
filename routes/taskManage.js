@@ -38,7 +38,7 @@ router.get("/taskList", async (req, res) => {
   }
 });
 
-// get particular task
+// get particular task and taking project
 router.get("/taskLists/:id", async (req, res) => {
   try {
     let User = await client
@@ -56,6 +56,60 @@ router.get("/taskLists/:id", async (req, res) => {
   }
 });
 
+// get particular task
+router.get("/findTask/:id", async (req, res) => {
+  try {
+    let User = await client
+      .db("planner")
+      .collection("task")
+      .findOne({ _id: mongodb.ObjectId(req.params.id) });
+    res.json(User);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+//Update
+router.put("/update/:id", async (req, res) => {
+  try {
+    let User = await client
+      .db("planner")
+      .collection("task")
+      .findOneAndUpdate(
+        { _id: mongodb.ObjectId(req.params.id) },
+        { $set: req.body }
+      );
+    let resUser = await client
+      .db("planner")
+      .collection("task")
+      .find()
+      .toArray();
+    res.json(resUser);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+// Delete
+router.delete("/del/:id", async (req, res) => {
+  try {
+    let User = await client
+      .db("planner")
+      .collection("task")
+      .findOneAndDelete({ _id: mongodb.ObjectId(req.params.id) });
+    let resUser = await client
+      .db("planner")
+      .collection("task")
+      .find()
+      .toArray();
+    res.json(resUser);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
 // activity
 router.post("/activity", async (req, res) => {
   try {
