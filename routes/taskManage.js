@@ -110,6 +110,9 @@ router.delete("/del/:id", async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+
+// Activity Area
+
 // activity
 router.post("/activity", async (req, res) => {
   try {
@@ -134,10 +137,67 @@ router.post("/activity", async (req, res) => {
   }
 });
 
+// get particular activity
+router.get("/findActivity/:id", async (req, res) => {
+  try {
+    let User = await client
+      .db("planner")
+      .collection("activity")
+      .findOne({ _id: mongodb.ObjectId(req.params.id) });
+
+    res.json(User);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+//Update
+router.put("/activityUpdate/:id", async (req, res) => {
+  try {
+    let User = await client
+      .db("planner")
+      .collection("activity")
+      .findOneAndUpdate(
+        { _id: mongodb.ObjectId(req.params.id) },
+        { $set: req.body }
+      );
+    let resUser = await client
+      .db("planner")
+      .collection("activity")
+      .find()
+      .toArray();
+    res.json(resUser);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+// // Delete
+router.delete("/activityDel/:id", async (req, res) => {
+  try {
+    let User = await client
+      .db("planner")
+      .collection("activity")
+      .findOneAndDelete({ _id: mongodb.ObjectId(req.params.id) });
+    let resUser = await client
+      .db("planner")
+      .collection("activity")
+      .find()
+      .toArray();
+    res.json(resUser);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
 // grouped activity
 router.get("/activities/:id", async (req, res) => {
   try {
-    let user = await client
+    // Activity
+    let activity = await client
       .db("planner")
       .collection("activity")
       .find({
@@ -145,7 +205,8 @@ router.get("/activities/:id", async (req, res) => {
       })
       .toArray();
 
-    let employee = await client
+    //Task
+    let tasks = await client
       .db("planner")
       .collection("task")
       .find({
@@ -153,25 +214,27 @@ router.get("/activities/:id", async (req, res) => {
       })
       .toArray();
 
-    for (let i = 0; i < employee.length; i++) {
-      for (let j = 0; j < user.length; j++) {
-        if (employee[i].taskName === user[j].task) {
-          employee[i].status = user[j].status;
-          employee[i].color = user[j].color;
-          employee[i].date = user[j].date;
-          employee[i].startTime = user[j].startTime;
-          employee[i].endTime = user[j].endTime;
-          employee[i].activeDescription = user[j].description;
+    for (let i = 0; i < tasks.length; i++) {
+      for (let j = 0; j < activity.length; j++) {
+        if (tasks[i].taskName === activity[j].task) {
+          tasks[i].status = activity[j].status;
+          tasks[i].color = activity[j].color;
+          tasks[i].date = activity[j].date;
+          tasks[i].startTime = activity[j].startTime;
+          tasks[i].endTime = activity[j].endTime;
+          tasks[i].activeDescription = activity[j].description;
+          tasks[i].activityId = activity[j]._id;
         }
       }
     }
+
     let resUser = await client
       .db("planner")
       .collection("employee")
       .find()
       .toArray();
 
-    let mem = employee.map((el) => {
+    let mem = tasks.map((el) => {
       return el.employee;
     });
 
@@ -186,16 +249,27 @@ router.get("/activities/:id", async (req, res) => {
       }
       return final;
     };
+
     let final = gettingImage(mem, resUser);
-    for (let i = 0; i < employee.length; i++) {
+
+    for (let i = 0; i < tasks.length; i++) {
       for (let j = 0; j < final.length; j++) {
-        if (employee[i].employee === final[j].firstName) {
-          employee[i].profile = final[j].profile;
+        if (tasks[i].employee === final[j].firstName) {
+          tasks[i].profile = final[j].profile;
         }
       }
     }
-    // let response = client.db("planner").collection("sumUp").insertOne(employee);
-    res.json(employee);
+
+    // let response = await client
+    //   .db("planner")
+    //   .collection("sumUp")
+    //   .findOneAndUpdate(
+    //     { id: "1a" },
+    //     { $push: { details: { $each: [...employee] } } }
+    //   );
+    // console.log(tasks);
+    res.json(tasks);
+    // res.json(response);
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Something went wrong" });
