@@ -174,7 +174,7 @@ router.put("/activityUpdate/:id", async (req, res) => {
   }
 });
 
-// // Delete
+// Delete
 router.delete("/activityDel/:id", async (req, res) => {
   try {
     let User = await client

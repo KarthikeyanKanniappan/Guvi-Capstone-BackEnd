@@ -9,8 +9,9 @@ import userRoutes from "./routes/UserRoutes.js";
 import employee from "./routes/employeeRoutes.js";
 import project from "./routes/project.js";
 import taskManage from "./routes/taskManage.js";
+import calculation from "./routes/calculation.js";
 
-// MidleWare
+// MiddleWare
 app.use(express.json());
 app.use(cors());
 
@@ -22,6 +23,7 @@ app.use("/projects", project);
 app.use("/users", userRoutes);
 app.use("/team", employee);
 app.use("/task", taskManage);
+app.use("/calc", calculation);
 
 app.listen(process.env.PORT || 3001, () => {
   console.log(`Server started at ${process.env.PORT || 3001}`);
